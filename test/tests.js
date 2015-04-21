@@ -351,7 +351,16 @@ describe('Operator overloading Test Suite', function () {
             (function () {
                 var r = 33;
                 r ^= 33 + 22;
+                console.log('r', r);
                 assertEqual(r, '33^33+22');
+            }.enableOverloading())();
+            done();
+        });
+        it('should overload = operator', function (done) {
+            (function () {
+                var r = 33;
+                r = 33 + 22;
+                assertEqual(r, '33+22=33');
             }.enableOverloading())();
             done();
         });
