@@ -2,11 +2,13 @@
 
 var gulp = require('gulp'),
     clean = require('gulp-clean'),
-    browserify = require('gulp-browserify'),
+    gulpBrowserify = require('gulp-browserify'),
+    browserify = require('browserify'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     size = require('gulp-size'),
-    merge = require('merge-stream');
+    merge = require('merge-stream'),
+    source = require("vinyl-source-stream");
 
 
 gulp.task('compress', ['browserify'], function() {
@@ -41,17 +43,19 @@ gulp.task('clean-browser', function() {
         .pipe(size());
 });
 
-gulp.task('browserify', ['clean-browser'], function() {
-    var overload = gulp.src('lib/overload.js')
-        .pipe(browserify({
-            insertGlobals: true
-        }))
-        .pipe(rename('overload.js'))
-        .pipe(gulp.dest('./dist/browser/'))
-        .pipe(size());
+gulp.task('browserify', function() {
+    var b = browserify();
+
+    b.require('./lib/overload.js', {
+        expose: 'operator-overloading-js'
+    });
+
+    var overload = b.bundle()
+        .pipe(source('overload.js'))
+        .pipe(gulp.dest('./dist/browser/'));
 
     var overloadGlobal = gulp.src('global.js')
-        .pipe(browserify({
+        .pipe(gulpBrowserify({
             insertGlobals: true
         }))
         .pipe(rename('overload.global.js'))
@@ -61,4 +65,4 @@ gulp.task('browserify', ['clean-browser'], function() {
     return merge(overload, overloadGlobal);
 });
 
-gulp.task('build', ['clean-browser', 'browserify', 'compress']);
+gulp.task('build', ['browserify', 'compress']);
