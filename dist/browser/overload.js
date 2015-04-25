@@ -10467,7 +10467,6 @@ parseStatement: true, parseSourceElement: true */
 /* vim: set sw=4 ts=4 et tw=80 : */
 
 },{}],"operator-overloading-js":[function(require,module,exports){
-(function (process){
 'use strict';
 
 var esprima = require('esprima');
@@ -10557,33 +10556,23 @@ function visit(statement, index, program) {
             break;
         case 'AssignmentExpression':
             if (statement.operator && funcNames[statement.operator]) {
-                if (statement.operator === '=') {
-                    statement.right = {
-                        type: 'CallExpression',
-                        callee: {
-                            'type': 'MemberExpression',
-                            'computed': false,
-                            'object': statement.left,
-                            'property': {
-                                'type': 'Identifier',
-                                'name': funcNames[statement.operator]
-                            }
-                        },
-                        arguments: [statement.right]
-                    };
-                    visit(statement.left, index, program);
-                    visit(statement.right.arguments[0], index, program);
-                } else {
-                    statement.right = {
-                        'type': 'BinaryExpression',
-                        'operator': statement.operator.replace(/=/, '').trim(),
-                        'left': statement.left,
-                        'right': statement.right
-                    };
-                    statement.operator = '=';
-                    visit(statement.left, index, program);
-                    visit(statement.right, index, program);
-                }
+                statement.right = {
+                    type: 'CallExpression',
+                    callee: {
+                        'type': 'MemberExpression',
+                        'computed': false,
+                        'object': statement.left,
+                        'property': {
+                            'type': 'Identifier',
+                            'name': funcNames[statement.operator]
+                        }
+                    },
+                    arguments: [statement.right]
+                };
+                statement.operator = '=';
+
+                visit(statement.left, index, program);
+                visit(statement.right.arguments[0], index, program);
             } else {
                 visit(statement.right, index, program);
             }
@@ -10692,8 +10681,8 @@ module.exports = exports = function (func) {
         }
     }));
     var retFn = Function.apply(func, args);
-    if (process.env.OVERLOAD_DEBUG) console.log(JSON.stringify(program, null, 4));
-    if (process.env.OVERLOAD_DEBUG) console.log(retFn.toString());
+    // if (process.env.OVERLOAD_DEBUG) console.log(JSON.stringify(program, null, 4));
+    // if (process.env.OVERLOAD_DEBUG) console.log(retFn.toString());
     return retFn;
 };
 
@@ -10842,5 +10831,4 @@ cons.forEach(function (constructor) {
 
 exports.functionNames = funcNames;
 
-}).call(this,require('_process'))
-},{"_process":2,"escodegen":3,"esprima":21}]},{},[]);
+},{"escodegen":3,"esprima":21}]},{},[]);

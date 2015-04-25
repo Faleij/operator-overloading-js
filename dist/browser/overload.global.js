@@ -3,7 +3,7 @@
 'use strict';
 
 Function.prototype.enableOverloading = require('./lib/overload');
-}).call(this,require("v229Ge"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_8dfe2899.js","/")
+}).call(this,require("v229Ge"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/fake_e8e24d01.js","/")
 },{"./lib/overload":2,"buffer":22,"v229Ge":26}],2:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 'use strict';
@@ -95,33 +95,23 @@ function visit(statement, index, program) {
             break;
         case 'AssignmentExpression':
             if (statement.operator && funcNames[statement.operator]) {
-                if (statement.operator === '=') {
-                    statement.right = {
-                        type: 'CallExpression',
-                        callee: {
-                            'type': 'MemberExpression',
-                            'computed': false,
-                            'object': statement.left,
-                            'property': {
-                                'type': 'Identifier',
-                                'name': funcNames[statement.operator]
-                            }
-                        },
-                        arguments: [statement.right]
-                    };
-                    visit(statement.left, index, program);
-                    visit(statement.right.arguments[0], index, program);
-                } else {
-                    statement.right = {
-                        'type': 'BinaryExpression',
-                        'operator': statement.operator.replace(/=/, '').trim(),
-                        'left': statement.left,
-                        'right': statement.right
-                    };
-                    statement.operator = '=';
-                    visit(statement.left, index, program);
-                    visit(statement.right, index, program);
-                }
+                statement.right = {
+                    type: 'CallExpression',
+                    callee: {
+                        'type': 'MemberExpression',
+                        'computed': false,
+                        'object': statement.left,
+                        'property': {
+                            'type': 'Identifier',
+                            'name': funcNames[statement.operator]
+                        }
+                    },
+                    arguments: [statement.right]
+                };
+                statement.operator = '=';
+
+                visit(statement.left, index, program);
+                visit(statement.right.arguments[0], index, program);
             } else {
                 visit(statement.right, index, program);
             }
@@ -230,8 +220,8 @@ module.exports = exports = function (func) {
         }
     }));
     var retFn = Function.apply(func, args);
-    if (process.env.OVERLOAD_DEBUG) console.log(JSON.stringify(program, null, 4));
-    if (process.env.OVERLOAD_DEBUG) console.log(retFn.toString());
+    // if (process.env.OVERLOAD_DEBUG) console.log(JSON.stringify(program, null, 4));
+    // if (process.env.OVERLOAD_DEBUG) console.log(retFn.toString());
     return retFn;
 };
 
