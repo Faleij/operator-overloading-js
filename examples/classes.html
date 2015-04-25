@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JS Bin</title>
+  <script src="../dist/browser/overload.js"></script>
+
+  <script>
+    var overload = require('operator-overloading-js');
+
+    overload(function() {
+        'use strict';
+
+        class Vec2 {
+          constructor(x, y) {
+            this._x = x;
+            this._y = y;
+          }
+            
+          __addAssign(b) {
+            this._x += b.x;
+            this._y += b.y;
+            return this;
+          }
+
+          get x() {
+            return this._x;
+          }
+          get y() {
+            return this._y;
+          }
+
+          set x(x) {
+            this._x = x;
+          }
+          set y(y) {
+            this._y = y;
+          }
+
+          toString() {
+            return '(' + this.x + ', ' + this.y + ')';
+          }
+        }
+
+        var a = new Vec2(300, 400),
+            b = new Vec2(150, 200);
+
+        a += b;
+
+        console.log(a.toString());
+    })();
+  </script>
+</head>
+<body>
+
+</body>
+</html>

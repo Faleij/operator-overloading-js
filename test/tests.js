@@ -12,7 +12,7 @@ describe('Operator overloading Test Suite', function () {
 
         //Require the overload js.
         var functionNames = overload.functionNames;
-        console.log('functionNames', functionNames);
+        
         Object.keys(functionNames).forEach(function (operator) {
             Number.prototype[functionNames[operator]] = function (lval) {
                 var val = this.toString();
